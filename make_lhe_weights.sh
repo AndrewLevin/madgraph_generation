@@ -36,6 +36,9 @@ echo $run_card
 echo \$param_card
 echo $param_card
 
+echo hostname
+hostname
+
 echo "begin checking if there is a reweight file"
 if [ $reweight_file == "NONE" ]; then
     echo "no reweight file"
@@ -49,7 +52,9 @@ if hostname | grep 'lxplus.*\.cern\.ch' >& /dev/null; then
     cp -r /afs/cern.ch/work/a/anlevin/madgraph_beta/2.0.0beta4/ .
 elif hostname | grep 'mit\.edu' &> /dev/null; then
     echo "running at MIT"
-    cp -r /scratch/anlevin/MG5_aMC_v2_0_0/ .
+    cp -r /scratch/anlevin/MG5_aMC_v2.2.3.tar.gz .
+    tar -xvf MG5_aMC_v2.2.3.tar.gz
+    cp -r /scratch/anlevin/SM_LS01_LT012_LM0167/ MG5_aMC_v2_2_3/models/
 else
     echo "running on unknown machine, exiting"
     echo "hostname:"
@@ -62,12 +67,12 @@ ls
 
 echo ""
 
-echo "ls MG5_aMC_v2_0_0"
-ls MG5_aMC_v2_0_0
+echo "ls MG5_aMC_v2_2_3"
+ls MG5_aMC_v2_2_3
 
 echo "" 
 
-cd MG5_aMC_v2_0_0
+cd MG5_aMC_v2_2_3
 
 echo "pwd"
 pwd
@@ -77,7 +82,7 @@ echo ""
 if hostname | grep 'lxplus.*\.cern\.ch' >& /dev/null; then
     echo "running on lxplus"
     cat > commands.mg5 <<EOF
-set nb_core 4
+set nb_core 8
 import $model
 define l+ = e+ mu+ ta+
 define l- = e- mu- ta-
@@ -107,6 +112,11 @@ import $model
 define l+ = e+ mu+ ta+
 define l- = e- mu- ta-
 $gen_command1
+EOF
+if [ $gen_command2 != "NONE" ]; then
+     echo $gen_command2 >> commands.mg5
+fi
+cat >> commands.mg5 <<EOF
 $gen_command2
 output mg_dir
 launch mg_dir
@@ -154,7 +164,7 @@ echo "removing the madgraph directory"
 
 echo ""
 
-rm -r MG5_aMC_v2_0_0/
+rm -r MG5_aMC_v2_2_3/
 
 echo "ls"
 ls

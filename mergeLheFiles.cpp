@@ -62,17 +62,24 @@ int main(int argc, char** argv)
   
   while(!initialFile.eof())
   {
+
     getline(initialFile, line);
-    if( !initialFile.good() ) break;
+
+    if( !initialFile.good() && line != "</LesHouchesEvents>") break;
     
+
     if( line == "</LesHouchesEvents>" )
     {
+
       for(int fileIt2 = 0; fileIt2 < fileIt-1; ++fileIt2)
       {
         std::ifstream fileToAdd(fileToAddNames.at(fileIt2), std::ios::in);
         
+
+
         while(!fileToAdd.eof())
         {
+
           getline(fileToAdd, line2); 
           
           // decide whether to skip event or not 
@@ -82,11 +89,11 @@ int main(int argc, char** argv)
             writeEvent = true;
           }
                 
-          
           // write line to outFile
           if(writeEvent == true)
             outFile << line2 << std::endl;
-          
+
+
           
           // end of event
           if( line2 == "</event>" )
